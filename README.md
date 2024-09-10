@@ -2,6 +2,8 @@
 
 ## Build and Test status
 
+[![Java CI with Maven](https://github.com/Beersheva24VitaliyNovozhilov/linear-recursion/actions/workflows/maven.yml/badge.svg)](https://github.com/Beersheva24VitaliyNovozhilov/linear-recursion/actions/workflows/maven.yml)
+
 ## HWs/CWs
 
 * CW/HW 27 - Linear Recursion
