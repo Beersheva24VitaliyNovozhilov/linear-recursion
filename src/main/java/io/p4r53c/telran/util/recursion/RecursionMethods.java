@@ -79,6 +79,9 @@ public class RecursionMethods {
      *
      * @param arr the array to calculate sum of
      * @return the sum of the array elements
+     * 
+     *         Helper: {@link #sum(int, int[])}
+     * 
      */
     public static int sum(int[] arr) {
         return sum(0, arr);
