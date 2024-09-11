@@ -1,5 +1,9 @@
 package io.p4r53c.telran.util.recursion;
 
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -75,13 +79,23 @@ class RecursionMethodsTest {
         assertTrue(isSubstring("hello world", "ld"));
     }
 
+    /**
+     * Checks if one byte stream is substring of the other using recursion.
+     * 
+     * Only here we use {@link java.lang.String#getBytes} and
+     * {@link java.io.ByteArrayInputStream}
+     *
+     * @throws IOException if there is a problem reading from the streams
+     */
     @Test
-    void testIsSubstringNoStandardMethods() {
-        assertTrue(isSubstringNoStandardMethods("hello", ""));
-        assertFalse(isSubstringNoStandardMethods("", "hello"));
-        assertTrue(isSubstringNoStandardMethods("hello world", "hello"));
-        assertTrue(isSubstringNoStandardMethods("hello world", "world"));
-        assertTrue(isSubstringNoStandardMethods("hello world", "ld"));
+    void testIsSubstringByteStreams() throws IOException {
+        String string = "hello world";
+        String subString = "orl";
+
+        InputStream stringBytes = new ByteArrayInputStream(string.getBytes());
+        InputStream subStringBytes = new ByteArrayInputStream(subString.getBytes());
+
+        assertTrue(isSubstringByteStreams(stringBytes, subStringBytes));
     }
 
     @ParameterizedTest

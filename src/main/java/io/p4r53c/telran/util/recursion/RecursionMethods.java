@@ -1,5 +1,9 @@
 package io.p4r53c.telran.util.recursion;
 
+import java.io.InputStream;
+
+import java.io.IOException;
+
 /**
  * Contains methods that uses linear recursion.
  *
@@ -109,25 +113,42 @@ public class RecursionMethods {
     }
 
     /**
-     * Checks if one string is substring of the other using recursion without using
-     * String class methods (almost :)).
+     * Checks if one byte stream is substring of the other using recursion.
      * 
-     * Only conversion to char array, no {@link java.lang.String#charAt()},
-     * {@link java.lang.String#length()} and {@link java.lang.String#substring()}
-     * and other String class methods.
+     * No {@link java.lang.String} methods are used at all.
      * 
-     * Without the {@link java.lang.String#toCharArray()} calls, I'm afraid I'd have
-     * to go back to the methods that are avoided here. But I'm not sure.
+     * Because of the encapsulation of the {@link java.lang.String} class's data,
+     * accessing its
+     * internal data through methods such as {@link java.lang.String#charAt()},
+     * {@link java.lang.String#length()} is necessary,
+     * since a string in Java is an immutable object that stores characters in a
+     * private array.
      * 
-     * Helper: {@link #isSubstringRecursive(char[], char[], int, int)}
+     * However, in my opinion, we can avoid using {@link java.lang.String} methods
+     * by working at a low-level through I/O streams and bytes. This method uses
+     * {@link java.lang.StringBuilder}, from which
+     * {@link java.lang.StringBuilder#charAt()},
+     * {@link java.lang.StringBuilder#length()} are called, but since
+     * {@link java.lang.StringBuilder} does not implement or inherit String
+     * explicitly, but implements the lower-level {@link java.lang.CharSequence}, so
+     * technically we avoiding {@link java.lang.String} methods.
+     * 
+     * Only one place where we use {@link java.lang.String#getBytes()} - is a test
+     * method.
      *
-     * @param string    the string to check
-     * @param subString the substring to check for
+     * @param stringByteStream    the byte stream to check
+     * @param subStringByteStream the substring to check for
      * @return true if the substring is found, false otherwise
+     * 
+     *         Helper: {@link #byteInputToCharArray(InputStream)}
+     *         Helper: {@link #isSubstringRecursive(char[], char[], int, int)}
+     * 
+     * @throws IOException if there is a problem reading from the streams
      */
-    public static boolean isSubstringNoStandardMethods(String string, String subString) {
-        char[] strArr = string.toCharArray();
-        char[] subArr = subString.toCharArray();
+    public static boolean isSubstringByteStreams(InputStream stringByteStream, InputStream subStringByteStream)
+            throws IOException {
+        char[] strArr = byteInputToCharArray(stringByteStream);
+        char[] subArr = byteInputToCharArray(subStringByteStream);
 
         return isSubstringRecursive(strArr, subArr, 0, 0);
     }
@@ -196,6 +217,31 @@ public class RecursionMethods {
         }
 
         return result;
+    }
+
+    /**
+     * Low-level conversion of the given input stream into a character array.
+     *
+     * @param stream the stream to convert
+     * @return the character array
+     * @throws IOException if there is a problem reading from the stream
+     */
+    private static char[] byteInputToCharArray(InputStream stream) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int bytes;
+
+        while ((bytes = stream.read()) != -1) {
+            stringBuilder.append((char) bytes);
+        }
+
+        char[] charArray = new char[stringBuilder.length()];
+
+        for (int i = 0; i < stringBuilder.length(); i++) {
+            charArray[i] = stringBuilder.charAt(i);
+        }
+
+        return charArray;
     }
 
     /**
